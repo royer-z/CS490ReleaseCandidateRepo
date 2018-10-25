@@ -1,0 +1,45 @@
+@charset "utf-8";
+
+#loginButton {
+	color: white;
+	background-color:#8F2021;	
+}
+
+.centered {
+	text-align: center;
+}
+
+html, body {
+	height: 100%;
+	margin: 0;
+}
+
+.flex-container {
+	display: flex;
+	height: 100%;
+}
+
+#examDraft {
+	background-color: #C0FFF1;
+	flex: 1;
+}
+
+#availableQ {
+	background-color: #FFEFC0;
+	flex: 1;
+}
+
+#recentlyAddedQ {
+	background-color: #FFEFBF;
+	flex: 1;
+}
+
+#addQ {
+	background-color: #C4FFD7;
+	flex: 1;
+}
+
+#releaseExamDiv {
+	background-color: #F6FFC4;
+}
+
