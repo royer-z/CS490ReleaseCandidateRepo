@@ -7,7 +7,8 @@ if($requestPrompt !== 'releaseE') { // Detect if any form field is empty
 }
 else { // Send data using cURL
 	$formData;
-	$formData->action = $requestPrompt;
+	$formData->open = "false";
+	$formData->gradeReleased = "false";
 	
 	$formDataJSON = json_encode($formData);
 	

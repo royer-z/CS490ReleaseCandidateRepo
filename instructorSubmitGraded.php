@@ -1,18 +1,24 @@
 <?php
-// cURL in PHP
-$pickedGE = $_POST['pickedGE'];
+session_start();
 
-if($pickedGE === '') { // Detect if any form field is empty
-	echo json_encode('Please choose an exam');
+// cURL in PHP
+$newPoints = $_POST['newPoints'];
+$comments = $_POST['comments'];
+	
+if(empty($newPoints) || empty($comments)) { // Detect if error
+	echo json_encode('error');
 }
 else { // Send data using cURL
 	$formData;
-	$formData->pickedGE = $pickedGE;
+	$formData->studentId = $_SESSION['studentId'];
+	$formData->questionIds = $_SESSION['questionIds'];
+	$formData->adjustments = $newPoints;
+	$formData->comments = $comments;
 	
 	$formDataJSON = json_encode($formData);
 	
 	$cSession = curl_init();
-	curl_setopt($cSession, CURLOPT_URL, "https://web.njit.edu/~tmd24/CS490/api/v1/releaseGrade.php");
+	curl_setopt($cSession, CURLOPT_URL, "https://web.njit.edu/~tmd24/CS490/api/v1/submitAdjustmentsComments.php");
 	curl_setopt($cSession, CURLOPT_POST, TRUE);
 	curl_setopt($cSession, CURLOPT_POSTFIELDS, $formDataJSON);
 	curl_setopt($cSession, CURLOPT_RETURNTRANSFER, TRUE);

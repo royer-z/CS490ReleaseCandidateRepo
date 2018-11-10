@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 // cURL in PHP
 $examId = $_POST['pickedE'];
 
@@ -6,6 +8,8 @@ if($examId === '') { // Detect if any form field is empty
 	echo json_encode('empty');
 }
 else { // Send data using cURL
+	$_SESSION['examId'] = $examId;
+	
 	$formData;
 	$formData->examId = $examId;
 	

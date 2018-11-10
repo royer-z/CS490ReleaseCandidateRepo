@@ -1,19 +1,18 @@
 <?php
 // cURL in PHP
-$examId = $_POST['pickedE'];
+$questionId = $_POST['pickedDQ'];
 
-if($examId === '') { // Detect if ID form field is empty
-	echo json_encode('Please choose an exam');
+if(empty($question)) { // Detect if any form field is empty
+	echo json_encode('empty');
 }
 else { // Send data using cURL
 	$formData;
-	$formData->examId = $examId;
-	$formData->open = "true";
+	$formData->questionId = $questionId;
 	
 	$formDataJSON = json_encode($formData);
 	
 	$cSession = curl_init();
-	curl_setopt($cSession, CURLOPT_URL, "https://web.njit.edu/~tmd24/CS490/api/v1/openCloseExam.php");
+	curl_setopt($cSession, CURLOPT_URL, ""); // Middle may need to create a php to handle deletions
 	curl_setopt($cSession, CURLOPT_POST, TRUE);
 	curl_setopt($cSession, CURLOPT_POSTFIELDS, $formDataJSON);
 	curl_setopt($cSession, CURLOPT_RETURNTRANSFER, TRUE);

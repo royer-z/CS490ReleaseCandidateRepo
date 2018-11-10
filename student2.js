@@ -118,18 +118,14 @@ function takeChecked() {
 
 function submitExamAnswers() {
 	"use strict"; // Avoids error message
-	
 	var answerError = document.getElementById('answerError');
-	answerError.innerHTML = "Exam Submitted!";
 	
 	var inputExamForm = document.getElementById('inputExamForm');
 	var fData = new FormData(inputExamForm);
 	
-	/*
-	for (var pair of fData.entries()) { // Try to access form arrays
-		console.log("pair: "+pair+", 1: "+pair[0][0]+", 2: "+pair[1]);
+	for (var value of fData.entries()) {
+		console.log(value);
 	}
-	*/
 	
 	fetch('student2SubmitExamAnswers.php', {
 		method: 'POST',
@@ -138,10 +134,10 @@ function submitExamAnswers() {
 	.then( res => res.json()) // Once we have a response
 	.then (newData => { // Data from response ^
 		if(newData === 'empty') {
-			error.innerHTML = "ERROR GETTING EXAM TO TAKE"; // Update this. It's from a copy
+			answerError.innerHTML = "ERROR IN SUBMISSION";
 		}
 		else {
-			
+			answerError.innerHTML = "Exam Submitted!";
 		}
 	});
 }

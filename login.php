@@ -1,5 +1,8 @@
 <?php
+session_start();
+// https://web.njit.edu/~rvz2/login.php
 // cURL in PHP
+
 $username = $_POST['username'];
 $password = $_POST['password'];
 
@@ -21,6 +24,12 @@ else { // Send data using cURL
 	curl_setopt($cSession, CURLOPT_RETURNTRANSFER, TRUE);
 	$cResult = curl_exec($cSession);
 	curl_close($cSession);
+	
+	$objResult = json_decode($cResult);
+	if ($objResult->instructor == "false" && $objResult->loginSucceeded == "true"){
+		$_SESSION['studentId'] = $objResult->studentId;
+	}
+	
 	echo $cResult;
 }
 ?>

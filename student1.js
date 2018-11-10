@@ -46,13 +46,13 @@ function takeExam() {
 
 function viewGrades() {
 	"use strict"; // Avoids error message
-	screenDisplay.innerHTML = "<div><h1>Graded exams:</h1><div id='showGradesDiv'><form id='selectGradeForm'></form></div></div>";
+	screenDisplay.innerHTML = "<div id='viewGradesDiv'><h1>Graded exams:</h1><div id='showGradesDiv'><form id='selectGradeForm'></form><p id='viewReportResult'>Result: </p></div></div>";
 	
 	var selectGradeForm = document.getElementById('selectGradeForm');
 	
-	// Fetch all questions and display in 
-	var mainForm = document.getElementById('mainForm');
+	var mainForm = document.getElementById('student1MainForm');
 	var fData = new FormData(mainForm);
+	
 	fetch('student1GetGrades.php', {
 		method: 'POST',
 		body: fData
@@ -60,16 +60,16 @@ function viewGrades() {
 	.then( res => res.json()) // Once we have a response
 	.then (newData => { // Data from response ^
 		if(newData === 'error') {
-			selectGradeForm.innerHTML = "None";
+			selectGradeForm.innerHTML = "ERROR GETTING EXAMS";
 		}
 		else{
 			var item;
-			var gArray = newData.gradedExams.push('Exam1', 'Exam2');
-			console.log("ArrayG:",gArray);
 			for (item = 0; item < newData.gradedExams.length; item++) {
-				selectGradeForm.innerHTML += "<input type='radio' name='pickedG' value="+newData.gradedExams[item]+">"+newData.gradedExams[item]+"<br>";
+				if (newData.gradedExams[item].gradeReleased === "true"){
+					selectGradeForm.innerHTML += "<input type='radio' name='examId' value="+newData.gradedExams[item].examId+">"+newData.gradedExams[item].examName+"<br>";
+				}
 			}
-			selectGradeForm.innerHTML += "<button type='button' id='checkedGButton' onclick='viewChecked()'>Take Exam</button>";
+			selectGradeForm.innerHTML += "<button type='button' id='checkedGButton' onclick='viewChecked()'>View Report</button>";
 		}
 	});
 }
@@ -94,7 +94,7 @@ function takeChecked() {
 			error.innerHTML = "ERROR GETTING EXAM TO TAKE";
 		}
 		else {
-			screenDisplay.innerHTML = "<div><h1>Please complete the "+newData.examName+" exam:</h1><div id='displayExamDiv'><form id='inputExamForm'></form><p id='answerError'></p></div></div>";
+			screenDisplay.innerHTML = "<div><h1>Please complete the "+newData.examName+" exam:</h1><div id='displayExamDiv'><form id='inputExamForm'></form><p id='answerError'>Result:</p></div></div>";
 			
 			var inputExamForm = document.getElementById('inputExamForm');
 			for (var item = 0; item < newData.questions.length; item++) {
@@ -118,18 +118,14 @@ function takeChecked() {
 
 function submitExamAnswers() {
 	"use strict"; // Avoids error message
-	
 	var answerError = document.getElementById('answerError');
-	answerError.innerHTML = "Exam Submitted!";
 	
 	var inputExamForm = document.getElementById('inputExamForm');
 	var fData = new FormData(inputExamForm);
 	
-	/*
-	for (var pair of fData.entries()) { // Try to access form arrays
-		console.log("pair: "+pair+", 1: "+pair[0][0]+", 2: "+pair[1]);
+	for (var value of fData.entries()) {
+		console.log(value);
 	}
-	*/
 	
 	fetch('student1SubmitExamAnswers.php', {
 		method: 'POST',
@@ -138,14 +134,47 @@ function submitExamAnswers() {
 	.then( res => res.json()) // Once we have a response
 	.then (newData => { // Data from response ^
 		if(newData === 'empty') {
-			error.innerHTML = "ERROR GETTING EXAM TO TAKE"; // Update this. It's from a copy
+			answerError.innerHTML = "ERROR IN SUBMISSION";
 		}
 		else {
-			
+			answerError.innerHTML = "Exam Submitted!";
 		}
 	});
 }
 
 function viewChecked() {
 	"use strict"; // Avoids error message
+	
+	var viewReportResult = document.getElementById('viewReportResult');
+	var viewGradesDiv = document.getElementById('viewGradesDiv');
+	
+	var selectGradeForm = document.getElementById('selectGradeForm');
+	var fData = new FormData(selectGradeForm);
+	
+	fetch('student1ViewReport.php', {
+		method: 'POST',
+		body: fData
+	})
+	.then( res => res.json()) // Once we have a response
+	.then (newData => { // Data from response ^
+		if(newData === 'empty') {
+			viewReportResult.innerHTML = "Please select an exam.";
+		}
+		else{
+			viewGradesDiv.innerHTML = "";
+			if (newData.gradeReleased === "true") {
+				var item;
+				for (item = 0; item < newData.questions.length; item++) {
+					viewGradesDiv.innerHTML += "<strong>Question:</strong> "+newData.questions[item].questionText+"<br><strong>Answer:</strong>"+newData.questions[item].answerText+"<br><strong>Total points:</strong>"+newData.questions[item].grade+"<br>";
+					var iter;
+					for (iter = 0; iter < newData.questions[item].pointBreakdown.length; iter++) {
+						viewGradesDiv.innerHTML += "<strong>Points:</strong> "+newData.questions[item].pointBreakdown[iter].points+"<br>"+"<strong>Reason:</strong> "+newData.questions[item].pointBreakdown[iter].reason+"<br>";
+					}
+				}
+			}
+			else {
+				viewGradesDiv.innerHTML = "NO EXAM GRADES TO VIEW";
+			}
+		}
+	});
 }

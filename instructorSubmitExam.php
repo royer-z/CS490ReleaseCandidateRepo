@@ -1,19 +1,24 @@
 <?php
+// https://web.njit.edu/~rvz2/instructorSubmitExam.php
 // cURL in PHP
 $examName = $_POST['examName'];
 $questionIds = $_POST['pickedQ'];
+$questionPoints = $_POST['questionPoints'];
 
-
-if(count($questionIds) == 0) { // Detect if questions were selected
+if(empty($questionIds)) { // Detect if questions were selected
 	echo json_encode('empty');
 }
 else if($examName == '') {
+	echo json_encode('empty');
+}
+else if(empty($questionPoints)) {
 	echo json_encode('empty');
 }
 else { // Send data using cURL
 	$formData;
 	$formData->examName = $examName;
 	$formData->questionIds = $questionIds;
+	$formData->questionPoints = $questionPoints;
 	
 	$formDataJSON = json_encode($formData);
 	
