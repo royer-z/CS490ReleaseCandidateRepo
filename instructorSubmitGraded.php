@@ -2,17 +2,21 @@
 session_start();
 
 // cURL in PHP
-$newPoints = $_POST['newPoints'];
+$studentId = $_SESSION['studentId'];
+$questionIds = $_SESSION['questionIds'];
+$adjustments = $_POST['adjustments'];
+$adjustmentReasons = $_POST['adjustmentReasons'];
 $comments = $_POST['comments'];
 	
-if(empty($newPoints) || empty($comments)) { // Detect if error
-	echo json_encode('error');
+if(empty($adjustments) || empty($adjustmentReasons) || empty($comments)) { // Detect if error
+	echo json_encode('empty');
 }
 else { // Send data using cURL
 	$formData;
-	$formData->studentId = $_SESSION['studentId'];
-	$formData->questionIds = $_SESSION['questionIds'];
-	$formData->adjustments = $newPoints;
+	$formData->studentId = $studentId;
+	$formData->questionIds = $questionIds;
+	$formData->adjustments = $adjustments;
+	$formData->adjustmentReasons = $adjustmentReasons;
 	$formData->comments = $comments;
 	
 	$formDataJSON = json_encode($formData);
@@ -24,6 +28,7 @@ else { // Send data using cURL
 	curl_setopt($cSession, CURLOPT_RETURNTRANSFER, TRUE);
 	$cResult = curl_exec($cSession);
 	curl_close($cSession);
-	echo $cResult;
+	//echo $cResult;
+	echo json_encode('good');
 }
 ?>

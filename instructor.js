@@ -25,9 +25,9 @@ document.getElementById('releaseG').onchange = function() {
 
 function createQuestion() {
 	"use strict"; // Avoids error message
-	screenDisplay.innerHTML = "<div id='recentlyAddedQ'><h1>Added questions:</h1><div id='questionsListDiv'></div><form id='deleteQForm'></form></div><div id='addQ'><h1>Add a question:</h1><form id='addQForm'><textarea form='addQForm' name='prompt' placeholder='Question'></textarea><br><input type='text' name='topic' placeholder='Topic'><br><input type='text' name='parameter1' placeholder='Required parameter 1'><br><input type='text' name='parameter2' placeholder='Required parameter 2'><br><input type='text' name='output' placeholder='Required output'><br><input type='text' name='functionName' placeholder='Required function name'><br><input type='radio' name='difficulty' value='1'> Easy<br><input type='radio' name='difficulty' value='2'> Medium<br><input type='radio' name='difficulty' value='3'> Hard<br><br><button type='button' id='addQButton' onclick='submitQuestion()'>Add</button>&nbsp;<button type='button' id='resetAQFormButton' onclick='resetAQForm()'>Reset</button><p id='error'></p></form></div>";
+	screenDisplay.innerHTML = "<div id='recentlyAddedQ'><h1>Added questions:</h1><div id='questionsListDiv'></div></div><div id='addQ'><h1>Add a question:</h1><form id='addQForm'><textarea form='addQForm' name='prompt' placeholder='Question' rows='5' cols='50'></textarea><br>Topic: <select name='topic'><option value='other'>other</option><option value='addition'>addition</option><option value='subtraction'>subtraction</option><option value='multiplication'>multiplication</option><option value='division'>division</option><option value='exponents'>exponents</option><option value='remainder'>remainder</option><option value='strings'>strings</option><option value='arrays'>arrays</option><option value='average'>average</option><option value='graphs'>graphs</option></select><br><input type='text' name='functionName' placeholder='Required function name'><br>Constraint: <select name='constraint'><option value='other'>other</option><option value='forLoop'>for loop</option><option value='whileLoop'>while loop</option><option value='recursion'>recursion</option></select><br><br>Difficulty:<br><input type='radio' name='difficulty' value='1'> Easy<br><input type='radio' name='difficulty' value='2'> Medium<br><input type='radio' name='difficulty' value='3'> Hard<br><br><input type='text' name='testCaseInput1' placeholder='Test case 1: input'><br><input type='text' name='testCaseOutput1' placeholder='Test case 1: output'><br><br><input type='text' name='testCaseInput2' placeholder='Test case 2: input'><br><input type='text' name='testCaseOutput2' placeholder='Test case 2: output'><br><br><input type='text' name='testCaseInput3' placeholder='Test case 3: input'><br><input type='text' name='testCaseOutput3' placeholder='Test case 3: output'><br><br><input type='text' name='testCaseInput4' placeholder='Test case 4: input'><br><input type='text' name='testCaseOutput4' placeholder='Test case 4: output'><br><br><input type='text' name='testCaseInput5' placeholder='Test case 5: input'><br><input type='text' name='testCaseOutput5' placeholder='Test case 5: output'><br><br><input type='text' name='testCaseInput6' placeholder='Test case 6: input'><br><input type='text' name='testCaseOutput6' placeholder='Test case 6: output'><br><br><button type='button' id='addQButton' onclick='submitQuestion()'>Create question</button>&nbsp;<button type='button' id='resetAQFormButton' onclick='resetAQForm()'>Reset form</button><p id='error'></p></form></div>";
 	
-	var deleteQForm = document.getElementById('deleteQForm');
+	var questionsListDiv = document.getElementById('questionsListDiv');
 	var mainForm = document.getElementById('mainForm');
 	var fData = new FormData(mainForm);
 
@@ -43,58 +43,18 @@ function createQuestion() {
 		else{
 			var item;
 			for (item = 0; item < newData.questions.length; item++) {
-				deleteQForm.innerHTML += "<input type='radio' name='pickedDQ' value="+newData.questions[item].questionId+">"+"Prompt: "+newData.questions[item].questionText+"<br>Question ID: "+newData.questions[item].questionId+"<br>Required function name: "+newData.questions[item].functionName+"<br>Topic: "+newData.questions[item].topic+"<br>Difficulty: "+newData.questions[item].difficulty+"<br><br>";
+				questionsListDiv.innerHTML += newData.questions[item].questionText+"<br>Question Id: "+newData.questions[item].questionId+"<br>Required function name: "+newData.questions[item].functionName+"<br>Topic: "+newData.questions[item].topic+"<br>Difficulty: ";
+					
+				if(newData.questions[item].difficulty === '1') {
+					questionsListDiv.innerHTML += "Easy<br><br>";
+				}
+				else if(newData.questions[item].difficulty === '2') {
+					questionsListDiv.innerHTML += "Medium<br><br>";
+				}
+				else if(newData.questions[item].difficulty === '3') {
+					questionsListDiv.innerHTML += "Hard<br><br>";
+				}
 			}
-			deleteQForm.innerHTML += "<button type='button' id='deleteQButton' onclick='deleteQuestion()'>Delete</button><p id='deleteQResult'>Result: </p>";
-		}
-	});
-}
-
-function deleteQuestion() {
-	"use strict"; // Avoids error message
-	
-	var deleteQForm = document.getElementById('deleteQForm');
-	var deleteQResult = document.getElementById('deleteQResult');
-	var fData = new FormData(deleteQForm);
-	
-	// Check the if the form data is correct
-	for (var pair of fData.entries()) {
-		console.log("P1:"+pair[0]+" "+"P2:"+pair[1]);
-	}
-	
-	fetch('instructorDeleteQ.php', {
-		method: 'POST',
-		body: fData
-	})
-	.then( res => res.json()) // Once we have a response
-	.then (newData => { // Data from response ^
-		if(newData === 'empty') {
-			deleteQResult.innerHTML = "Please select a question to delete.";
-		}
-		else{
-			deleteQResult.innerHTML = "Successfully deleted";
-			// Refresh questions list
-			var mainForm = document.getElementById('mainForm');
-			var fData = new FormData(mainForm);
-
-			fetch('instructorShowQ.php', {
-				method: 'POST',
-				body: fData
-			})
-			.then( res => res.json()) // Once we have a response
-			.then (newData => { // Data from response ^
-				if(newData === 'error') {
-					error.innerHTML = "ERROR DISPLAYING QUESTIONS LIST";
-				}
-				else{
-					deleteQForm.innerHTML = ""; // Refresh Added Questions Div
-					var item;
-					for (item = 0; item < newData.questions.length; item++) {
-						deleteQForm.innerHTML += "<input type='radio' name='pickedDQ' value="+newData.questions[item].questionId+">"+"Prompt: "+newData.questions[item].questionText+"<br>Question ID: "+newData.questions[item].questionId+"<br>Required function name: "+newData.questions[item].functionName+"<br>Topic: "+newData.questions[item].topic+"<br>Difficulty: "+newData.questions[item].difficulty+"<br><br>";
-					}
-					deleteQForm.innerHTML += "<button type='button' id='deleteQButton' onclick='deleteQuestion()'>Delete</button><p id='deleteQResult'>Result: </p>";
-				}
-			});
 		}
 	});
 }
@@ -132,7 +92,19 @@ function createExam() {
 			
 			var item;
 			for (item = 0; item < newData.questions.length; item++) {
-				selectQForm.innerHTML += "<input type='checkbox' onchange='refreshExamDraft()' id='"+newData.questions[item].questionId+"' name='pickedQ[]' value="+newData.questions[item].questionId+">"+newData.questions[item].questionText+"<br>Required function name: "+newData.questions[item].functionName+"<br>Topic: "+newData.questions[item].topic+"<br>Difficulty: "+newData.questions[item].difficulty+"<br><input type='text' oninput='refreshExamDraft()' name='questionPoints[]' placeholder='Points worth'><br><br>";
+				selectQForm.innerHTML += "<input type='checkbox' onchange='refreshExamDraft()' id='"+newData.questions[item].questionId+"' name='pickedQ[]' value="+newData.questions[item].questionId+">"+newData.questions[item].questionText+"<br>Required function name: "+newData.questions[item].functionName+"<br>Topic: "+newData.questions[item].topic+"<br>Difficulty: ";
+				
+				if(newData.questions[item].difficulty === '1') {
+					selectQForm.innerHTML += "Easy<br>";
+				}
+				else if(newData.questions[item].difficulty === '2') {
+					selectQForm.innerHTML += "Medium<br>";
+				}
+				else if(newData.questions[item].difficulty === '3') {
+					selectQForm.innerHTML += "Hard<br>";
+				}
+				
+				selectQForm.innerHTML += "<input type='text' oninput='refreshExamDraft()' name='questionPoints[]' placeholder='Points worth'><br><br>";
 			}
 			selectQForm.innerHTML += "<br><button type='button' id='checkedQButton' onclick='addAllChecked()'>Create Exam</button><p id='examError'><p><br>";
 		}
@@ -154,7 +126,19 @@ function refreshExamDraft() {
 		}
 		if (pair[0] == "pickedQ[]") { // Tim's solution
 			var questionId = parseInt(pair[1]) -1;
-			examDraftDiv.innerHTML += allQuestions[questionId].questionText+"<br>Required function name: "+allQuestions[questionId].functionName+"<br>Topic: "+allQuestions[questionId].topic+"<br>Difficulty: "+allQuestions[questionId].difficulty+"<br>Points: ";
+			examDraftDiv.innerHTML += allQuestions[questionId].questionText+"<br>Required function name: "+allQuestions[questionId].functionName+"<br>Topic: "+allQuestions[questionId].topic+"<br>Difficulty: ";
+			
+			if(allQuestions[questionId].difficulty === '1') {
+				examDraftDiv.innerHTML += "Easy<br>";
+			}
+			else if(allQuestions[questionId].difficulty === '2') {
+				examDraftDiv.innerHTML += "Medium<br>";
+			}
+			else if(allQuestions[questionId].difficulty === '3') {
+				examDraftDiv.innerHTML += "Hard<br>";
+			}
+			
+			examDraftDiv.innerHTML += "Points: ";
 		}
 		if (pair[0] == "questionPoints[]") {
 				examDraftDiv.innerHTML += pair[1]+"<br><br>";
@@ -193,7 +177,7 @@ function releaseExam() {
 
 function releaseGrade() {
 	"use strict"; // Avoids error message
-	screenDisplay.innerHTML = "<div><h1>Select a graded exam to release:</h1><br><div id='gradedExamsDiv'><form id='selectGEForm'></form><p id='gError'>Result:</p></div></div>";
+	screenDisplay.innerHTML = "<div><h1>Select a graded exam to release:</h1><br><div id='gradedExamsDiv'><form id='selectGEForm'></form><p id='gError'>Result:</p><br></div></div>";
 	
 	var gradedExamsDiv = document.getElementById('gradedExamsDiv');
 	var gError = document.getElementById('gError');
@@ -258,32 +242,23 @@ function submitQuestion() {
 				}
 				else{
 					questionsListDiv.innerHTML = ""; // Refresh Added Questions Div
-					console.log(newData.questions[0].questionId);
 					var item;
-					var qArray = newData.questions;
-					console.log("ArrayQ:",qArray[0]);
 					for (item = 0; item < newData.questions.length; item++) {
-						questionsListDiv.innerHTML += newData.questions[item].questionText+"<br>Question ID: "+newData.questions[item].questionId+"<br>Required function name: "+newData.questions[item].functionName+"<br>Topic: "+newData.questions[item].topic+"<br>Difficulty: "+newData.questions[item].difficulty+"<br><br>";
+						questionsListDiv.innerHTML += newData.questions[item].questionText+"<br>Question Id: "+newData.questions[item].questionId+"<br>Required function name: "+newData.questions[item].functionName+"<br>Topic: "+newData.questions[item].topic+"<br>Difficulty: ";
+						
+						if(newData.questions[item].difficulty === '1') {
+							questionsListDiv.innerHTML += "Easy<br><br>";
+						}
+						else if(newData.questions[item].difficulty === '2') {
+							questionsListDiv.innerHTML += "Medium<br><br>";
+						}
+						else if(newData.questions[item].difficulty === '3') {
+							questionsListDiv.innerHTML += "Hard<br><br>";
+						}
 					}
 					
 				}
 			});
-			
-			/*
-			questionsListDiv.innerHTML += newData.questionText+"<br>";
-			questionsListDiv.innerHTML += newData.topic+"<br>";
-			// questionListDiv.innerHTML += newData.questionId+"<br>;"
-			
-			if(newData.difficulty === '1') {
-				questionsListDiv.innerHTML += "Easy<br><br>";
-			}
-			else if(newData.difficulty === '2') {
-				questionsListDiv.innerHTML += "Medium<br><br>";
-			}
-			else if(newData.difficulty === '3') {
-				questionsListDiv.innerHTML += "Hard<br><br>";
-			}
-			*/
 		}
 	});
 	
@@ -313,28 +288,6 @@ function addAllChecked() {
 		}
 	});
 }
-
-function submitDraft() {
-	"use strict"; // Avoids error message
-	
-	var onlyExamDraftForm = document.getElementById('selectQForm');
-	var fData = new FormData(onlyExamDraftForm);
-	var result = document.getElementById('createExamResult');
-	
-	fetch('instructorSubmitExam.php', {
-		method: 'POST',
-		body: fData
-	})
-	.then( res => res.json()) // Once we have a response
-	.then (newData => { // Data from response ^
-		if(newData === 'Blank exam name!') {
-			result.innerHTML = "Blank exam name!";
-		}
-		else{
-			result.innerHTML = "Exam created!";
-		}
-	});
-} // Unused. May be deleted or used as reference
 
 function releaseRadioExam() {
 	"use strict"; // Avoids error message
@@ -367,7 +320,6 @@ function radioAdjustExam() {
 	var onlyReleaseGradedExamForm = document.getElementById('selectGEForm');
 	var fData = new FormData(onlyReleaseGradedExamForm);
 	var radioGradedResult = document.getElementById('radioGradedResult');
-	var gradedExamsDiv = document.getElementById('gradedExamsDiv');
 	
 	for (var pair of fData.entries()) { // Test this to see if examId and studentId transfer over
 		console.log("P1:"+pair[0]+",P2:"+pair[1]);
@@ -384,20 +336,21 @@ function radioAdjustExam() {
 			radioGradedResult.innerHTML = "Please choose an exam.";
 		}
 		else{ 
-			gradedExamsDiv.innerHTML = "";
+			onlyReleaseGradedExamForm.innerHTML = "";
 			if (newData.gradeReleased === "false") {
 				var item;
 				for (item = 0; item < newData.questions.length; item++) {
-					gradedExamsDiv.innerHTML += "<strong>Question:</strong> "+newData.questions[item].questionText+"<br><strong>Answer:</strong>"+newData.questions[item].answerText+"<br><strong>Total points:</strong>"+newData.questions[item].grade+"<br>";
+					onlyReleaseGradedExamForm.innerHTML += "<strong>Question:</strong> "+newData.questions[item].questionText+"<br><strong>Answer:</strong>"+newData.questions[item].answerText+"<br><strong>Total points:</strong>"+newData.questions[item].grade+"<br>";
 					var iter;
 					for (iter = 0; iter < newData.questions[item].pointBreakdown.length; iter++) {
-						gradedExamsDiv.innerHTML += "<form id='adjustmentForm'><strong>Points:</strong> "+newData.questions[item].pointBreakdown[iter].points+"<br>"+"<strong>Reason:</strong> "+newData.questions[item].pointBreakdown[iter].reason+"<br><input type='text' name='newPoints[]' placeholder='New score'><br><input type='text' name='comments[]' placeholder='Add comment'><br>";
+						onlyReleaseGradedExamForm.innerHTML += "<strong>Points:</strong> "+newData.questions[item].pointBreakdown[iter].points+"<br>"+"<strong>Reason:</strong> "+newData.questions[item].pointBreakdown[iter].reason+"<br>";
 					}
+					onlyReleaseGradedExamForm.innerHTML += "<input type='text' name='adjustments[]' placeholder='Adjustment'><br><input type='text' name='adjustmentReasons[]' placeholder='Adjustment reason'><br><input type='text' name='comments[]' placeholder='Comment'><br>";
 				}
-				gradedExamsDiv.innerHTML += "<button type='button' id='submitAdjustmentsButton' onclick='submitExamAdjustments()'>Submit Adjustments</button></form><br><p id='submitAdjustmentsResult'></p>";
+				onlyReleaseGradedExamForm.innerHTML += "<br><br><button type='button' id='submitAdjustmentsButton' onclick='submitExamAdjustments()'>Submit Adjustments</button></form><br><p id='submitAdjustmentsResult'>Result:</p><br>";
 			}
 			else {
-				gradedExamsDiv.innerHTML = "NO EXAM GRADES TO RELEASE";
+				onlyReleaseGradedExamForm.innerHTML = "NO EXAM GRADES TO RELEASE";
 			}
 		}
 	});
@@ -405,10 +358,15 @@ function radioAdjustExam() {
 
 function submitExamAdjustments() {
 	"use strict"; // Avoids error message
+	var onlyReleaseGradedExamForm = document.getElementById('selectGEForm');
 	var submitAdjustmentsResult = document.getElementById('submitAdjustmentsResult');
 	
-	var onlyAdjustmentForm = document.getElementById('adjustmentForm');
-	var fData = new FormData(onlyAdjustmentForm);
+	var fData = new FormData(onlyReleaseGradedExamForm);
+	console.log(fData);
+	
+	for (var pair of fData.entries()) {
+		console.log("P1:"+pair[0]+",P2:"+pair[1]);
+	}
 	
 	fetch('instructorSubmitGraded.php', {
 		method: 'POST',
@@ -416,11 +374,101 @@ function submitExamAdjustments() {
 	})
 	.then( res => res.json()) // Once we have a response
 	.then (newData => { // Data from response ^
-		if(newData === 'error') {
-			submitAdjustmentsResult.innerHTML = "ERROR";
+		if(newData === 'empty') {
+			submitAdjustmentsResult.innerHTML = "EMPTY, DID NOT SUBMIT";
 		}
 		else{
 			submitAdjustmentsResult.innerHTML = "EXAM SUBMITTED!";
 		}
 	}); 
 }
+
+// Unused
+/*
+function addTestCase() {
+	"use strict"; // Avoids error message
+	
+	var addQForm = document.getElementById('addQForm');
+	
+	var br = document.createElement("BR");
+	addQForm.appendChild(br);
+	
+	var input = document.createElement("INPUT");
+	input.setAttribute('type', 'text');
+	input.setAttribute('name', 'testCaseInput[]');
+	input.setAttribute('placeholder', 'Test case input');
+    addQForm.appendChild(input);
+	
+	var br = document.createElement("BR");
+	addQForm.appendChild(br);
+	
+	var input = document.createElement("INPUT");
+	input.setAttribute('type', 'text');
+	input.setAttribute('name', 'testCaseOutput[]');
+	input.setAttribute('placeholder', 'Test case output');
+    addQForm.appendChild(input);
+}
+
+function delTestCase() {
+	"use strict"; // Avoids error message
+	
+	var addQForm = document.getElementById('addQForm');
+	
+	var i = 0;
+	for (i; i < 4; i++) {
+		console.log("LAST:"+addQForm.lastChild.nodeName);
+		if (addQForm.lastChild.nodeName !== "#text") {
+			addQForm.removeChild(addQForm.lastChild);
+		}
+	}
+}
+
+function deleteQuestion() {
+	"use strict"; // Avoids error message
+	
+	var deleteQForm = document.getElementById('deleteQForm');
+	var deleteQResult = document.getElementById('deleteQResult');
+	var fData = new FormData(deleteQForm);
+	
+	// Check the if the form data is correct
+	for (var pair of fData.entries()) {
+		console.log("P1:"+pair[0]+" "+"P2:"+pair[1]);
+	}
+	
+	fetch('instructorDeleteQ.php', {
+		method: 'POST',
+		body: fData
+	})
+	.then( res => res.json()) // Once we have a response
+	.then (newData => { // Data from response ^
+		if(newData === 'empty') {
+			deleteQResult.innerHTML = "Please select a question to delete.";
+		}
+		else{
+			deleteQResult.innerHTML = "Successfully deleted";
+			// Refresh questions list
+			var mainForm = document.getElementById('mainForm');
+			var fData = new FormData(mainForm);
+
+			fetch('instructorShowQ.php', {
+				method: 'POST',
+				body: fData
+			})
+			.then( res => res.json()) // Once we have a response
+			.then (newData => { // Data from response ^
+				if(newData === 'error') {
+					error.innerHTML = "ERROR DISPLAYING QUESTIONS LIST";
+				}
+				else{
+					deleteQForm.innerHTML = ""; // Refresh Added Questions Div
+					var item;
+					for (item = 0; item < newData.questions.length; item++) {
+						deleteQForm.innerHTML += "<input type='radio' name='pickedDQ' value="+newData.questions[item].questionId+">"+"Prompt: "+newData.questions[item].questionText+"<br>Question ID: "+newData.questions[item].questionId+"<br>Required function name: "+newData.questions[item].functionName+"<br>Topic: "+newData.questions[item].topic+"<br>Difficulty: "+newData.questions[item].difficulty+"<br><br>";
+					}
+					deleteQForm.innerHTML += "<button type='button' id='deleteQButton' onclick='deleteQuestion()'>Delete</button><p id='deleteQResult'>Result: </p>";
+				}
+			});
+		}
+	});
+}
+*/

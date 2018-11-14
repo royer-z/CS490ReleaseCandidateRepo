@@ -170,7 +170,9 @@ function viewChecked() {
 					for (iter = 0; iter < newData.questions[item].pointBreakdown.length; iter++) {
 						viewGradesDiv.innerHTML += "<strong>Points:</strong> "+newData.questions[item].pointBreakdown[iter].points+"<br>"+"<strong>Reason:</strong> "+newData.questions[item].pointBreakdown[iter].reason+"<br>";
 					}
+					viewGradesDiv.innerHTML += "<strong>Adjustment:</strong>"+newData.questions[item].instructorAdjustment+"<br><strong>Reason:</strong>"+newData.questions[item].instructorAdjustmentReason+"<br><strong>Comment:</strong>"+newData.questions[item].comment;
 				}
+				viewGradesDiv.innerHTML += "<br><strong>Final exam grade:</strong>"+newData.grade;
 			}
 			else {
 				viewGradesDiv.innerHTML = "NO EXAM GRADES TO VIEW";
