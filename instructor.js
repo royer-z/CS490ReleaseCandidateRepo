@@ -2,6 +2,8 @@
 //"use strict"; // Avoids error message //Use in functions
 
 var screenDisplay = document.getElementById('show');
+var filterArray = new Array();
+var filterArray2 = new Array();
 
 document.getElementById('createQ').onchange = function() {
 	"use strict"; // Avoids error message
@@ -25,7 +27,11 @@ document.getElementById('releaseG').onchange = function() {
 
 function createQuestion() {
 	"use strict"; // Avoids error message
-	screenDisplay.innerHTML = "<div id='recentlyAddedQ'><h1>Added questions:</h1><div id='questionsListDiv'></div></div><div id='addQ'><h1>Add a question:</h1><form id='addQForm'><textarea form='addQForm' name='prompt' placeholder='Question' rows='5' cols='50'></textarea><br>Topic: <select name='topic'><option value='other'>other</option><option value='addition'>addition</option><option value='subtraction'>subtraction</option><option value='multiplication'>multiplication</option><option value='division'>division</option><option value='exponents'>exponents</option><option value='remainder'>remainder</option><option value='strings'>strings</option><option value='arrays'>arrays</option><option value='average'>average</option><option value='graphs'>graphs</option></select><br><input type='text' name='functionName' placeholder='Required function name'><br>Constraint: <select name='constraint'><option value='other'>other</option><option value='forLoop'>for loop</option><option value='whileLoop'>while loop</option><option value='recursion'>recursion</option></select><br><br>Difficulty:<br><input type='radio' name='difficulty' value='1'> Easy<br><input type='radio' name='difficulty' value='2'> Medium<br><input type='radio' name='difficulty' value='3'> Hard<br><br><input type='text' name='testCaseInput1' placeholder='Test case 1: input'><br><input type='text' name='testCaseOutput1' placeholder='Test case 1: output'><br><br><input type='text' name='testCaseInput2' placeholder='Test case 2: input'><br><input type='text' name='testCaseOutput2' placeholder='Test case 2: output'><br><br><input type='text' name='testCaseInput3' placeholder='Test case 3: input'><br><input type='text' name='testCaseOutput3' placeholder='Test case 3: output'><br><br><input type='text' name='testCaseInput4' placeholder='Test case 4: input'><br><input type='text' name='testCaseOutput4' placeholder='Test case 4: output'><br><br><input type='text' name='testCaseInput5' placeholder='Test case 5: input'><br><input type='text' name='testCaseOutput5' placeholder='Test case 5: output'><br><br><input type='text' name='testCaseInput6' placeholder='Test case 6: input'><br><input type='text' name='testCaseOutput6' placeholder='Test case 6: output'><br><br><button type='button' id='addQButton' onclick='submitQuestion()'>Create question</button>&nbsp;<button type='button' id='resetAQFormButton' onclick='resetAQForm()'>Reset form</button><p id='error'></p></form></div>";
+	screenDisplay.innerHTML = "<div id='recentlyAddedQ'><h1>Added questions:</h1><div id='qListFilterHead'></div><div id='questionsListDiv'></div></div><div id='addQ'><h1>Add a question:</h1><form id='addQForm'><textarea form='addQForm' name='prompt' placeholder='Question' rows='5' cols='50'></textarea><br>Topic: <select name='topic'><option value='other'>other</option><option value='recursion'>recursion</option><option value='addition'>addition</option><option value='subtraction'>subtraction</option><option value='multiplication'>multiplication</option><option value='division'>division</option><option value='exponents'>exponents</option><option value='remainder'>remainder</option><option value='strings'>strings</option><option value='arrays'>arrays</option><option value='average'>average</option><option value='graphs'>graphs</option></select><br><input type='text' name='functionName' placeholder='Required function name'><br>Constraint: <select name='constraint'><option value='none'>none</option><option value='forLoop'>for loop</option><option value='whileLoop'>while loop</option><option value='recursion'>recursion</option></select><br><br>Difficulty:<br><input type='radio' name='difficulty' value='1'> Easy<br><input type='radio' name='difficulty' value='2'> Medium<br><input type='radio' name='difficulty' value='3'> Hard<br><br><input type='text' name='testCaseInput1' placeholder='Test case 1: input'><br><input type='text' name='testCaseOutput1' placeholder='Test case 1: output'><br><br><input type='text' name='testCaseInput2' placeholder='Test case 2: input'><br><input type='text' name='testCaseOutput2' placeholder='Test case 2: output'><br><br><input type='text' name='testCaseInput3' placeholder='Test case 3: input'><br><input type='text' name='testCaseOutput3' placeholder='Test case 3: output'><br><br><input type='text' name='testCaseInput4' placeholder='Test case 4: input'><br><input type='text' name='testCaseOutput4' placeholder='Test case 4: output'><br><br><input type='text' name='testCaseInput5' placeholder='Test case 5: input'><br><input type='text' name='testCaseOutput5' placeholder='Test case 5: output'><br><br><input type='text' name='testCaseInput6' placeholder='Test case 6: input'><br><input type='text' name='testCaseOutput6' placeholder='Test case 6: output'><br><br><button type='button' id='addQButton' onclick='submitQuestion()'>Create question</button>&nbsp;<button type='button' id='resetAQFormButton' onclick='resetAQForm()'>Reset form</button><p id='error'></p></form></div>";
+	
+	var qListFilterHead = document.getElementById('qListFilterHead');
+	
+	qListFilterHead.innerHTML += "<form id='qListFilterForm'>Filter by: <select onchange='filterList2(this.value)'><option value='none'>none</option><optgroup label='topic'><option value='other'>other</option><option value='recursion'>recursion</option><option value='addition'>addition</option><option value='subtraction'>subtraction</option><option value='multiplication'>multiplication</option><option value='division'>division</option><option value='exponents'>exponents</option><option value='remainder'>remainder</option><option value='strings'>strings</option><option value='arrays'>arrays</option><option value='average'>average</option><option value='graphs'>graphs</option></optgroup><optgroup label='difficulty'><option value='1'>easy</option><option value='2'>medium</option><option value='3'>hard</option></optgroup></select><button type='button' id='filterQLButton' onclick='getFiltered2()'>Filter</button><p id='filterError2'><p></form><p id='filterValues2'>Selected: </p><br>";
 	
 	var questionsListDiv = document.getElementById('questionsListDiv');
 	var mainForm = document.getElementById('mainForm');
@@ -67,11 +73,14 @@ function resetAQForm() {
 var allQuestions; // Tim's solution
 function createExam() {
 	"use strict"; // Avoids error message
-	screenDisplay.innerHTML = "<div id='examDraft'><h1>Draft of exam:</h1><div id='examDraftDiv'></div></div><div id='availableQ'><h1>Available questions:</h1><form id='selectQForm'></form></div>";
+	screenDisplay.innerHTML = "<div id='examDraft'><h1>Draft of exam:</h1><div id='examDraftDiv'></div></div><div id='availableQ'><h1>Available questions:</h1><div id='filterHead'></div><form id='selectQForm'></form></div>";
 	
+	var filterHead = document.getElementById('filterHead');
 	var selectQForm = document.getElementById('selectQForm');
 	
-	// Fetch all questions and display in 
+	filterHead.innerHTML += "<form id='filterForm'>Filter by: <select onchange='filterList(this.value)'><option value='none'>none</option><optgroup label='topic'><option value='other'>other</option><option value='recursion'>recursion</option><option value='addition'>addition</option><option value='subtraction'>subtraction</option><option value='multiplication'>multiplication</option><option value='division'>division</option><option value='exponents'>exponents</option><option value='remainder'>remainder</option><option value='strings'>strings</option><option value='arrays'>arrays</option><option value='average'>average</option><option value='graphs'>graphs</option></optgroup><optgroup label='difficulty'><option value='1'>easy</option><option value='2'>medium</option><option value='3'>hard</option></optgroup></select><button type='button' id='filterQButton' onclick='getFiltered()'>Filter</button><p id='filterError'><p></form><p id='filterValues'>Selected: </p><br>";
+	
+	// Fetch all questions and display
 	var mainForm = document.getElementById('mainForm');
 	var fData = new FormData(mainForm);
 	
@@ -85,8 +94,8 @@ function createExam() {
 			selectQForm.innerHTML = "ERROR";
 		}
 		else{
-			
 			allQuestions = newData.questions; // Tim's solution
+			console.log(allQuestions[0]);
 			
 			selectQForm.innerHTML += "<input type='text' oninput='refreshExamDraft()' name='examName' id='examName' placeholder='Exam name'><br><br>";
 			
@@ -106,9 +115,179 @@ function createExam() {
 				
 				selectQForm.innerHTML += "<input type='text' oninput='refreshExamDraft()' name='questionPoints[]' placeholder='Points worth'><br><br>";
 			}
+			
+			selectQForm.innerHTML += "<br><button type='button' id='checkedQButton' onclick='addAllChecked()'>Create Exam</button><p id='examError'>Result:<p><br>";
+		}
+	});
+}
+
+function getFiltered() {
+	var selectQForm = document.getElementById('selectQForm');
+	
+	var filterError = document.getElementById('filterError');
+	var filterForm = document.getElementById('filterForm');
+	
+	if (filterForm.lastChild.nodeName === "INPUT") {
+		filterForm.removeChild(filterForm.lastChild);
+		var input = document.createElement("INPUT");
+		input.setAttribute('type', 'hidden');
+		input.setAttribute('name', 'filterInput');
+		input.setAttribute('value', filterArray);
+		filterForm.appendChild(input);
+	}
+	else {
+		var input = document.createElement("INPUT");
+		input.setAttribute('type', 'hidden');
+		input.setAttribute('name', 'filterInput');
+		input.setAttribute('value', filterArray);
+		filterForm.appendChild(input);
+	}
+	
+	var fData = new FormData(filterForm);
+	
+	for (var pair of fData.entries()) {
+		console.log("P1:"+pair[0]+"P2:"+pair[1]);
+	}
+	
+	fetch('instructorRequestFilter.php', {
+		method: 'POST',
+		body: fData
+	})
+	.then( res => res.json()) // Once we have a response
+	.then (newData => { // Data from response ^
+		if(newData === 'empty') {
+			filterError.innerHTML = "EMPTY";
+		}
+		else{
+			selectQForm.innerHTML = "";
+			selectQForm.innerHTML += "<input type='text' oninput='refreshExamDraft()' name='examName' id='examName' placeholder='Exam name'><br><br>";
+			
+			var item;
+			for (item = 0; item < newData.questions.length; item++) {
+				selectQForm.innerHTML += "<input type='checkbox' onchange='refreshExamDraft()' id='"+newData.questions[item].questionId+"' name='pickedQ[]' value="+newData.questions[item].questionId+">"+newData.questions[item].questionText+"<br>Required function name: "+newData.questions[item].functionName+"<br>Topic: "+newData.questions[item].topic+"<br>Difficulty: ";
+				
+				if(newData.questions[item].difficulty === '1') {
+					selectQForm.innerHTML += "Easy<br>";
+				}
+				else if(newData.questions[item].difficulty === '2') {
+					selectQForm.innerHTML += "Medium<br>";
+				}
+				else if(newData.questions[item].difficulty === '3') {
+					selectQForm.innerHTML += "Hard<br>";
+				}
+				
+				selectQForm.innerHTML += "<input type='text' oninput='refreshExamDraft()' name='questionPoints[]' placeholder='Points worth'><br><br>";
+			}
+			
 			selectQForm.innerHTML += "<br><button type='button' id='checkedQButton' onclick='addAllChecked()'>Create Exam</button><p id='examError'><p><br>";
 		}
 	});
+	
+}
+
+function getFiltered2() {
+	var questionsListDiv = document.getElementById('questionsListDiv');
+	var qListFilterForm = document.getElementById('qListFilterForm');
+	var filterError2 = document.getElementById('filterError2');
+	
+	if (qListFilterForm.lastChild.nodeName === "INPUT") {
+		qListFilterForm.removeChild(qListFilterForm.lastChild);
+		var input = document.createElement("INPUT");
+		input.setAttribute('type', 'hidden');
+		input.setAttribute('name', 'filterInput');
+		input.setAttribute('value', filterArray2);
+		qListFilterForm.appendChild(input);
+	}
+	else {
+		var input = document.createElement("INPUT");
+		input.setAttribute('type', 'hidden');
+		input.setAttribute('name', 'filterInput');
+		input.setAttribute('value', filterArray2);
+		qListFilterForm.appendChild(input);
+	}
+	
+	var fData = new FormData(qListFilterForm);
+	
+	for (var pair of fData.entries()) {
+		console.log("P1:"+pair[0]+"P2:"+pair[1]);
+	}
+	
+	fetch('instructorRequestFilter.php', {
+		method: 'POST',
+		body: fData
+	})
+	.then( res => res.json()) // Once we have a response
+	.then (newData => { // Data from response ^
+		if(newData === 'empty') {
+			filterError2.innerHTML = "EMPTY";
+		}
+		else{
+			questionsListDiv.innerHTML = "";
+			
+			var item;
+			for (item = 0; item < newData.questions.length; item++) {
+				questionsListDiv.innerHTML += newData.questions[item].questionText+"<br>Question Id: "+newData.questions[item].questionId+"<br>Required function name: "+newData.questions[item].functionName+"<br>Topic: "+newData.questions[item].topic+"<br>Difficulty: ";
+					
+				if(newData.questions[item].difficulty === '1') {
+					questionsListDiv.innerHTML += "Easy<br><br>";
+				}
+				else if(newData.questions[item].difficulty === '2') {
+					questionsListDiv.innerHTML += "Medium<br><br>";
+				}
+				else if(newData.questions[item].difficulty === '3') {
+					questionsListDiv.innerHTML += "Hard<br><br>";
+				}
+			}
+		}
+	});
+}
+
+function filterList(option) {
+	"use strict"; // Avoids error message
+	var filterValues = document.getElementById('filterValues');
+	
+	if (option === 'none') {
+		filterValues.innerHTML = "Selected: ";
+		filterArray = [];
+	}
+	else {
+		if (filterArray.length === 0) {
+			filterValues.innerHTML += option;
+			filterArray.push(option);
+			console.log("ADDED:"+option);
+			console.log("AFTERADD:"+filterArray);
+		}
+		else {
+			filterValues.innerHTML += ", "+option;
+			filterArray.push(option);
+			console.log("ADDED:"+option);
+			console.log("AFTERADD:"+filterArray);
+		}
+	}
+}
+
+function filterList2(option) {
+	"use strict"; // Avoids error message
+	var filterValues2 = document.getElementById('filterValues2');
+	
+	if (option === 'none') {
+		filterValues2.innerHTML = "Selected: ";
+		filterArray2 = [];
+	}
+	else {
+		if (filterArray2.length === 0) {
+			filterValues2.innerHTML += option;
+			filterArray2.push(option);
+			console.log("ADDED:"+option);
+			console.log("AFTERADD:"+filterArray2);
+		}
+		else {
+			filterValues2.innerHTML += ", "+option;
+			filterArray2.push(option);
+			console.log("ADDED:"+option);
+			console.log("AFTERADD:"+filterArray2);
+		}
+	}
 }
 
 function refreshExamDraft() {
@@ -126,6 +305,7 @@ function refreshExamDraft() {
 		}
 		if (pair[0] == "pickedQ[]") { // Tim's solution
 			var questionId = parseInt(pair[1]) -1;
+			
 			examDraftDiv.innerHTML += allQuestions[questionId].questionText+"<br>Required function name: "+allQuestions[questionId].functionName+"<br>Topic: "+allQuestions[questionId].topic+"<br>Difficulty: ";
 			
 			if(allQuestions[questionId].difficulty === '1') {
@@ -274,6 +454,10 @@ function addAllChecked() {
 	
 	var fData = new FormData(onlyExamDraftForm);
 	
+	for (var pair of fData.entries()) {
+		console.log("P1:"+pair[0]+"P2:"+pair[1]);
+	}
+	
 	fetch('instructorSubmitExam.php', {
 		method: 'POST',
 		body: fData
@@ -283,7 +467,7 @@ function addAllChecked() {
 		if(newData === 'empty') {
 			error.innerHTML = "Please fill in all fields.";
 		}
-		else{
+		else {
 			error.innerHTML = "Exam Created!";
 		}
 	});

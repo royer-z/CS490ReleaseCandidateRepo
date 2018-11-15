@@ -109,7 +109,7 @@ function takeChecked() {
 					difficulty = 'Hard';
 				}
 				
-				inputExamForm.innerHTML += "Topic: "+newData.questions[item].topic+" Difficulty: "+difficulty+"<br><strong>Question "+(item+1)+":</strong> "+newData.questions[item].questionText+"<br><strong>Required function name:</strong> "+newData.questions[item].functionName+"<br><textarea form='inputExamForm' name='studentAnswerText[]' rows='5' cols='100' placeholder='Write your solution here'></textarea><input type='hidden' name='questIds[]' value='"+newData.questions[item].questionId+"'<br><br>";
+				inputExamForm.innerHTML += "Topic: "+newData.questions[item].topic+" Difficulty: "+difficulty+"<br><strong>Question "+(item+1)+":</strong> "+newData.questions[item].questionText+"<br><strong>Required function name:</strong> "+newData.questions[item].functionName+" <strong>Constraint: </strong>"+newData.questions[item].constraint+" <strong>Points:</strong>"+newData.questions[item].points+"<br><textarea form='inputExamForm' name='studentAnswerText[]' rows='10' cols='100' placeholder='Write your solution here'></textarea><input type='hidden' name='questIds[]' value='"+newData.questions[item].questionId+"'<br><br>";
 			}
 			inputExamForm.innerHTML += "<button type='button' id='submitExamAnswersButton' onclick='submitExamAnswers()'>Submit Exam</button>";
 		}
@@ -170,9 +170,9 @@ function viewChecked() {
 					for (iter = 0; iter < newData.questions[item].pointBreakdown.length; iter++) {
 						viewGradesDiv.innerHTML += "<strong>Points:</strong> "+newData.questions[item].pointBreakdown[iter].points+"<br>"+"<strong>Reason:</strong> "+newData.questions[item].pointBreakdown[iter].reason+"<br>";
 					}
-					viewGradesDiv.innerHTML += "<strong>Adjustment:</strong>"+newData.questions[item].instructorAdjustment+"<br><strong>Reason:</strong>"+newData.questions[item].instructorAdjustmentReason+"<br><strong>Comment:</strong>"+newData.questions[item].comment;
+					viewGradesDiv.innerHTML += "<strong>Adjustment:</strong>"+newData.questions[item].instructorAdjustment+"<br><strong>Reason:</strong>"+newData.questions[item].instructorAdjustmentReason+"<br><strong>Comment:</strong>"+newData.questions[item].comment+"<br><br>";
 				}
-				viewGradesDiv.innerHTML += "<br><strong>Final exam grade:</strong>"+newData.grade;
+				viewGradesDiv.innerHTML += "<br><strong>Final exam grade:</strong>"+newData.grade+"<br><br>";
 			}
 			else {
 				viewGradesDiv.innerHTML = "NO EXAM GRADES TO VIEW";

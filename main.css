@@ -10,8 +10,8 @@
 }
 
 html, body {
-	height: 100%;
 	margin: 0;
+	height: 100%;
 }
 
 .flex-container {
@@ -19,24 +19,32 @@ html, body {
 	height: 100%;
 }
 
+#show {
+	height: 100%;
+}
+
 #examDraft {
 	background-color: #C0FFF1;
 	flex: 1;
+	height: 150em;
 }
 
 #availableQ {
 	background-color: #FFEFC0;
 	flex: 1;
+	height: 150em;
 }
 
 #recentlyAddedQ {
 	background-color: #FFEFBF;
 	flex: 1;
+	height: 150em;
 }
 
 #addQ {
 	background-color: #C4FFD7;
 	flex: 1;
+	height: 150em;
 }
 
 #releaseExamDiv {

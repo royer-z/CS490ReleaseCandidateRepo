@@ -8,7 +8,7 @@ $questionPoints = $_POST['questionPoints'];
 if(empty($questionIds)) { // Detect if questions were selected
 	echo json_encode('empty');
 }
-else if($examName == '') {
+else if(empty($examName)) {
 	echo json_encode('empty');
 }
 else if(empty($questionPoints)) {
@@ -18,7 +18,7 @@ else { // Send data using cURL
 	$formData;
 	$formData->examName = $examName;
 	$formData->questionIds = $questionIds;
-	$formData->questionPoints = $questionPoints;
+	$formData->points = $questionPoints;
 	
 	$formDataJSON = json_encode($formData);
 	
